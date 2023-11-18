@@ -1,0 +1,107 @@
+from tkinter import *
+from tkinter import messagebox
+
+def valida(input):
+    if input.replace('.', '', 1).isdigit():
+        return True
+    elif input == "":
+        return True
+    else:
+        return False
+
+def analisaDados():
+    if vnome.get() != "" and vendereco.get() != "" and valtura.get() != "" and vpeso.get() != "":
+        nome_paciente = vnome.get()
+        endereco_completo = vendereco.get()
+        altura_str = valtura.get()
+        peso_str = vpeso.get()
+
+        altura = int(altura_str.replace('.', ''))
+        peso = float(peso_str)
+
+        altura_metros = altura / 100
+        imc = peso / (altura_metros * altura_metros)
+
+        if 1 <= imc <= 19:
+            estado = 'Abaixo do Peso'
+            cor_resultado = "yellow"
+        elif 19.1 <= imc <= 25:
+            estado = 'Peso Normal'
+            cor_resultado = "green"
+        elif imc > 25:
+            estado = 'Acima do Peso'
+            cor_resultado = "red"
+        else:
+            estado = ''
+            cor_resultado = "white"
+
+        resultado = f'O IMC é: {imc:.2f}\n\nEstado: {estado}'
+
+        lb["text"] = resultado
+        lb["bg"] = cor_resultado
+    else:
+        messagebox.showwarning(title="Aviso", message="Erro! Campos não preenchidos")
+        lb["text"] = ""
+        lb["bg"] = "#fff"  
+
+def confirmarSaida():
+    resposta_sair = messagebox.askyesno("Deseja Realmente Sair?", "Tem certeza que deseja sair?")
+    if resposta_sair:
+        main.quit()
+
+def reset():
+    lb["text"] = ""
+    lb["bg"] = "#fff"
+
+    vnome.delete(0, END)
+    vendereco.delete(0, END)
+    valtura.delete(0, END)
+    vpeso.delete(0, END)
+
+    vnome.set("")
+    vendereco.set("")
+    valtura.set("")
+    vpeso.set("")
+
+main = Tk()
+main.title("Calculadora IMC - Projeto Unis_Danilo_Prof_Alberane")
+main.geometry("600x320")
+main.configure(background="#800080")  
+
+label_nome = Label(main, text="Nome do Paciente: ", bg="#800080", font=14, anchor=W)
+label_nome.place(x=30, y=30, width=150, height=30)
+vnome = Entry(main, font="14")
+vnome.place(x=210, y=30, width=350, height=30)
+
+label_endereco = Label(main, text="Endereço Completo: ", font=14,  bg="#800080", anchor=W)
+label_endereco.place(x=30, y=80, width=150, height=30)
+vendereco = Entry(main)
+vendereco.place(x=210, y=80, width=350, height=30)
+
+label_altura = Label(main, text="Altura", bg="#800080", font=14, anchor=W)
+label_altura.place(x=30, y=130, width=100, height=30)
+valtura = Entry(main, font=14)
+valtura.place(x=210, y=130, width=100, height=30)
+registro_altura = main.register(valida)
+valtura.config(validate="key", validatecommand=(registro_altura, '%P'))
+
+label_peso = Label(main, text="Peso (Kg)", bg="#800080", font=14, anchor=W)
+label_peso.place(x=30, y=180, width=100, height=30)
+vpeso = Entry(main, font=14)
+vpeso.place(x=210, y=180, width=100, height=30)
+registro_peso = main.register(valida)
+vpeso.config(validate="key", validatecommand=(registro_peso, '%P'))
+
+btnCalcular = Button(main, text="Calcular", command=analisaDados)
+btnCalcular.place(x=210, y=280, width=70, height=25)
+
+btnReiniciar = Button(main, text="Reiniciar", command=reset)
+btnReiniciar.place(x=285, y=280, width=70, height=25)
+
+btnSair = Button(main, text="Sair", command=confirmarSaida)
+btnSair.place(x=490, y=280, width=70, height=25)
+
+lb = Label(main, text="", bg="#fff", fg="#000", font=('arial', 16, 'bold'))
+lb.place(x=320, y=130, width=240, height=135)
+
+main.mainloop()
